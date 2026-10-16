@@ -219,6 +219,7 @@ export default function TripCalculator({ tabs }: { tabs: React.ReactNode }) {
   return (
     <div className="w-full max-w-md select-none pb-10 md:max-w-2xl lg:max-w-6xl">
       <Header
+        center={tabs}
         title="出遊分帳"
         sub="Trip"
         menu={[
@@ -234,7 +235,8 @@ export default function TripCalculator({ tabs }: { tabs: React.ReactNode }) {
           },
         ]}
       />
-      {tabs}
+      {/* 寬螢幕時模式切換移到標題列 */}
+      <div className="lg:hidden">{tabs}</div>
 
       {/* 行程切換 */}
       <div className="-mx-4 mb-3 flex gap-2 overflow-x-auto px-4 pb-1">

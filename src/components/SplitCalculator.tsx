@@ -136,6 +136,7 @@ export default function SplitCalculator({ tabs }: { tabs: React.ReactNode }) {
   return (
     <div className="w-full max-w-md select-none pb-10 md:max-w-2xl lg:max-w-6xl">
       <Header
+        center={tabs}
         title="聚餐分帳"
         sub="Split"
         menu={[
@@ -144,7 +145,8 @@ export default function SplitCalculator({ tabs }: { tabs: React.ReactNode }) {
           { label: "全部重設", onClick: resetAll },
         ]}
       />
-      {tabs}
+      {/* 寬螢幕時模式切換移到標題列 */}
+      <div className="lg:hidden">{tabs}</div>
 
       <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:grid-rows-[auto_1fr] lg:gap-x-6">
         <div className="lg:col-start-1 lg:row-start-1">
