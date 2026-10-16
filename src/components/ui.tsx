@@ -101,7 +101,7 @@ export function Header({
       <h1 className="text-[32px] font-normal tracking-tight">
         {title} <span className="font-mono text-muted">{sub}</span>
       </h1>
-      {center && <div className="mx-8 hidden w-full max-w-md lg:block [&>*]:mb-0">{center}</div>}
+      {center && <div className="ml-auto mr-3 hidden w-full max-w-md lg:block [&>*]:mb-0">{center}</div>}
       <div className="relative" ref={ref}>
         <button
           aria-label="選單"
