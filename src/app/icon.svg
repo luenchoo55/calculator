@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- 灰綠底＋深色細框，和網站卡片同風格 -->
+  <rect x="12" y="12" width="488" height="488" rx="116" fill="#e6e9e4" stroke="#2c312d" stroke-width="20"/>
+  <!-- 被切走一塊的圓餅：代表分帳 -->
+  <path d="M248 261 L365.8 329 A136 136 0 1 1 248 125 Z" fill="none" stroke="#2c312d" stroke-width="22" stroke-linejoin="round"/>
+  <path d="M265.3 251 L265.3 115 A136 136 0 0 1 383.1 319 Z" fill="#2c312d" stroke="#2c312d" stroke-width="22" stroke-linejoin="round"/>
+</svg>
