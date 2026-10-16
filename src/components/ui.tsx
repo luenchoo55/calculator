@@ -288,10 +288,12 @@ export function SettleList({
   onToggle,
   payInfoOf,
   decimals = 0,
+  symbol = "$",
 }: {
   transfers: { fromId: string; toId: string; amount: number }[];
   nameOf: (id: string) => string;
   payInfoOf?: (id: string) => string | undefined;
+  symbol?: string;
   isPaid: (id: string) => boolean;
   onToggle: (id: string) => void;
   decimals?: number;
@@ -323,7 +325,8 @@ export function SettleList({
                   )}
                 </span>
                 <span>
-                  ${t.amount.toLocaleString("zh-TW", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}
+                  {symbol}
+                  {t.amount.toLocaleString("zh-TW", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}
                 </span>
                 <span className="w-4 text-center">{paid && <span className="animate-check">✓</span>}</span>
               </button>
@@ -338,7 +341,7 @@ export function SettleList({
 /** 聚餐／出遊切換 */
 export function ModeTabs({ mode, onChange }: { mode: "meal" | "trip"; onChange: (m: "meal" | "trip") => void }) {
   return (
-    <div className="relative mb-4 grid grid-cols-2 rounded-full border-[1.5px] border-line p-1 font-mono text-[13px]">
+    <div className="relative mb-4 grid grid-cols-2 rounded-full lg:max-w-md border-[1.5px] border-line p-1 font-mono text-[13px]">
       <span
         aria-hidden
         className={`absolute bottom-1 left-1 top-1 w-[calc(50%-4px)] rounded-full bg-line transition-transform duration-300 ease-[cubic-bezier(0.3,0.7,0.4,1.2)] ${

@@ -134,7 +134,7 @@ export default function SplitCalculator({ tabs }: { tabs: React.ReactNode }) {
   };
 
   return (
-    <div className="w-full max-w-md select-none pb-10">
+    <div className="w-full max-w-md select-none pb-10 md:max-w-2xl lg:max-w-6xl">
       <Header
         title="聚餐分帳"
         sub="Split"
@@ -146,267 +146,278 @@ export default function SplitCalculator({ tabs }: { tabs: React.ReactNode }) {
       />
       {tabs}
 
-      {/* 帳單金額 + 還款進度 */}
-      <section className="flex items-center gap-3 rounded-full border-[1.5px] border-line py-2 pl-2 pr-2">
-        <RoundButton label="減少 100" onClick={() => update({ bill: Math.max(0, state.bill - 100) })}>
-          −
-        </RoundButton>
-        <label className="flex min-w-0 items-baseline font-mono">
-          <span className="text-sm text-muted">$</span>
-          <input
-            type="number"
-            inputMode="decimal"
-            min={0}
-            value={state.bill === 0 ? "" : state.bill}
-            placeholder="0"
-            onChange={(e) => update({ bill: toNumber(e.target.value) })}
-            className="w-[5.5ch] min-w-0 bg-transparent text-[30px] leading-none tracking-tight outline-none placeholder:text-muted"
-            aria-label="帳單金額"
-          />
-        </label>
-        <RoundButton label="增加 100" onClick={() => update({ bill: state.bill + 100 })}>
-          +
-        </RoundButton>
-        <p className="min-w-0 flex-1 text-[11px] leading-tight text-muted">
-          {state.people.length === 0
-            ? "新增朋友開始分帳"
-            : calc.unpaidCount > 0
-              ? `還有 ${calc.unpaidCount} 人未還款…`
-              : "全部結清，辛苦了！"}
-        </p>
-        <ProgressRing value={calc.progress} />
-      </section>
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:grid-rows-[auto_1fr] lg:gap-x-6">
+        <div className="lg:col-start-1 lg:row-start-1">
+          {/* 帳單金額 + 還款進度 */}
+          <section className="flex items-center gap-3 rounded-full border-[1.5px] border-line py-2 pl-2 pr-2">
+            <RoundButton label="減少 100" onClick={() => update({ bill: Math.max(0, state.bill - 100) })}>
+              −
+            </RoundButton>
+            <label className="flex min-w-0 items-baseline font-mono">
+              <span className="text-sm text-muted">$</span>
+              <input
+                type="number"
+                inputMode="decimal"
+                min={0}
+                value={state.bill === 0 ? "" : state.bill}
+                placeholder="0"
+                onChange={(e) => update({ bill: toNumber(e.target.value) })}
+                className="w-[5.5ch] min-w-0 bg-transparent text-[30px] leading-none tracking-tight outline-none placeholder:text-muted"
+                aria-label="帳單金額"
+              />
+            </label>
+            <RoundButton label="增加 100" onClick={() => update({ bill: state.bill + 100 })}>
+              +
+            </RoundButton>
+            <p className="min-w-0 flex-1 text-[11px] leading-tight text-muted">
+              {state.people.length === 0
+                ? "新增朋友開始分帳"
+                : calc.unpaidCount > 0
+                  ? `還有 ${calc.unpaidCount} 人未還款…`
+                  : "全部結清，辛苦了！"}
+            </p>
+            <ProgressRing value={calc.progress} />
+          </section>
 
-      {/* 兩張資訊卡 */}
-      <section className="mt-3 grid grid-cols-2 gap-3">
-        <Card title="PEOPLE" sub={`${state.people.length} 人`}>
-          <div className="flex gap-3">
-            <div className="flex h-[92px] flex-1 items-end gap-[3px] overflow-hidden">
-              {state.people.length === 0 && <span className="text-[11px] text-muted">—</span>}
-              {state.people.map((p, i) => {
-                const done = calc.debts[i] === 0 || p.paid;
-                return (
-                  <button
-                    key={p.id}
-                    title={`${p.name} $${money(calc.shares[i], decimals)}`}
-                    onClick={() => calc.debts[i] > 0 && updatePerson(p.id, { paid: !p.paid })}
-                    className={`min-w-[4px] max-w-[9px] flex-1 rounded-full border-[1.5px] border-line transition-all ${done ? "bg-line" : ""}`}
-                    style={{ height: `${Math.max(12, (calc.shares[i] / maxShare) * 100)}%` }}
-                  />
-                );
-              })}
-            </div>
-            <div className="flex flex-col gap-2">
-              <Stat label="人均" value={money(calc.average, 0)} />
-              <Stat label="已還" value={money(calc.collected, decimals)} />
-            </div>
-          </div>
-          <div className="mt-auto pt-3">
-            <Stat label="分攤方式" value={modeLabel} />
-          </div>
-        </Card>
+          {/* 兩張資訊卡 */}
+          <section className="mt-3 grid grid-cols-2 gap-3">
+            <Card title="PEOPLE" sub={`${state.people.length} 人`}>
+              <div className="flex gap-3">
+                <div className="flex h-[92px] flex-1 items-end gap-[3px] overflow-hidden">
+                  {state.people.length === 0 && <span className="text-[11px] text-muted">—</span>}
+                  {state.people.map((p, i) => {
+                    const done = calc.debts[i] === 0 || p.paid;
+                    return (
+                      <button
+                        key={p.id}
+                        title={`${p.name} $${money(calc.shares[i], decimals)}`}
+                        onClick={() => calc.debts[i] > 0 && updatePerson(p.id, { paid: !p.paid })}
+                        className={`min-w-[4px] max-w-[9px] flex-1 rounded-full border-[1.5px] border-line transition-all ${done ? "bg-line" : ""}`}
+                        style={{ height: `${Math.max(12, (calc.shares[i] / maxShare) * 100)}%` }}
+                      />
+                    );
+                  })}
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Stat label="人均" value={money(calc.average, 0)} />
+                  <Stat label="已還" value={money(calc.collected, decimals)} />
+                </div>
+              </div>
+              <div className="mt-auto pt-3">
+                <Stat label="分攤方式" value={modeLabel} />
+              </div>
+            </Card>
 
-        <Card title="TOTAL" sub="含服務費">
-          <Stat label="總計" value={money(calc.total, Number.isInteger(calc.total) ? 0 : 2)} big />
-          <div className="mt-2 grid grid-cols-2 gap-2">
-            <Stat label="服務費" value={`+${money(calc.service, 0)}`} />
-            <Stat label="未還" value={money(calc.remaining, decimals)} />
-          </div>
-          <OnOff
-            label="無條件進位"
-            on={state.roundOn}
-            onChange={(v) => update({ roundOn: v })}
-            extra={calc.extra > 0.004 ? <span className="text-muted">+{money(calc.extra, 0)}</span> : null}
-          />
-        </Card>
-      </section>
+            <Card title="TOTAL" sub="含服務費">
+              <Stat label="總計" value={money(calc.total, Number.isInteger(calc.total) ? 0 : 2)} big />
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <Stat label="服務費" value={`+${money(calc.service, 0)}`} />
+                <Stat label="未還" value={money(calc.remaining, decimals)} />
+              </div>
+              <OnOff
+                label="無條件進位"
+                on={state.roundOn}
+                onChange={(v) => update({ roundOn: v })}
+                extra={calc.extra > 0.004 ? <span className="text-muted">+{money(calc.extra, 0)}</span> : null}
+              />
+            </Card>
+          </section>
 
-      {/* 分攤方式 */}
-      <Panel title="SPLIT" sub="分攤方式">
-        <div className="flex flex-wrap gap-2">
-          {SPLIT_MODES.map((m) => (
-            <button key={m.id} className={chipClass(state.splitMode === m.id)} onClick={() => update({ splitMode: m.id })}>
-              {m.label}
-            </button>
-          ))}
         </div>
-        <p className="mt-2 text-[11px] leading-snug text-muted">
-          {SPLIT_MODES.find((m) => m.id === state.splitMode)?.hint}
-        </p>
-        {state.splitMode === "items" && (
-          <ItemsEditor
-            state={state}
-            onUpdate={updateItem}
-            onAdd={() =>
-              update({ items: [...state.items, { id: newId(), name: "", price: 0, sharedBy: [] }] })
-            }
-            onRemove={(id) => update({ items: state.items.filter((it) => it.id !== id) })}
-          />
-        )}
-        <Notice warning={calc.splitWarning} note={calc.splitNote} />
-      </Panel>
 
-      {/* 服務費 */}
-      <ServicePanel state={state} amount={calc.service} onChange={update} />
-
-      {/* 誰代墊 */}
-      <Panel
-        title="PAID BY"
-        sub="誰先代墊"
-        right={
-          <div className="flex overflow-hidden rounded-full border-[1.5px] border-line font-mono text-[11px]">
-            {(["single", "multi"] as const).map((m) => (
-              <button
-                key={m}
-                onClick={() => update({ payerMode: m })}
-                className={`px-2.5 py-1 ${state.payerMode === m ? "bg-line text-background" : ""}`}
-              >
-                {m === "single" ? "一人" : "多人"}
-              </button>
-            ))}
-          </div>
-        }
-      >
-        {state.people.length === 0 && <p className="text-[11px] text-muted">先新增朋友</p>}
-        {state.payerMode === "single" ? (
-          <div className="flex flex-wrap gap-2">
-            {state.people.map((p) => (
-              <button key={p.id} className={chipClass(calc.payerId === p.id)} onClick={() => update({ payerId: p.id })}>
-                {p.name || "?"}
-              </button>
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-            {state.people.map((p) => (
-              <label key={p.id} className="flex items-center gap-1 border-b border-soft py-1 font-mono text-[13px]">
-                <span className="min-w-0 flex-1 truncate">{p.name || "?"}</span>
-                <span className="text-muted">$</span>
-                <input
-                  type="number"
-                  inputMode="decimal"
-                  min={0}
-                  value={p.advanced ? p.advanced : ""}
-                  placeholder="0"
-                  onChange={(e) => updatePerson(p.id, { advanced: toNumber(e.target.value) })}
-                  className="w-[7ch] bg-transparent text-right outline-none placeholder:text-soft"
-                  aria-label={`${p.name} 代墊金額`}
-                />
-              </label>
-            ))}
-          </div>
-        )}
-        {state.payerMode === "multi" && state.people.length > 0 && (
-          <p className="mt-2 font-mono text-[11px] text-muted">
-            代墊合計 ${money(calc.advancedSum, 0)}／總計 ${money(calc.total, 0)}
-          </p>
-        )}
-        <Notice warning={calc.payerWarning} />
-      </Panel>
-
-      {/* 人員列表 */}
-      <section className="mt-5">
-        <div className="flex items-center justify-between pb-2 font-mono text-[11px] tracking-wider">
-          <button onClick={addPerson} className="font-medium transition-[translate] hover:translate-x-1 hover:underline">
-            +ADD 新增朋友
-          </button>
-          <span className="text-muted">
-            {state.splitMode === "weight" ? "份數 ・ " : state.splitMode === "fixed" ? "指定 ・ " : ""}應付 ・ 已還
-          </span>
-        </div>
-        <ul className="border-t-[1.5px] border-line">
-          {state.people.map((p, i) => {
-            const owes = calc.debts[i] > 0;
-            const receives = calc.nets[i] > 0.004;
-            return (
-              <li
-                key={p.id}
-                className={`flex items-center gap-2 border-b border-soft py-2.5 font-mono text-[13px] ${
-                  owes && !p.paid ? "font-semibold" : "text-muted"
-                }`}
-              >
-                <button
-                  onClick={() => removePerson(p.id)}
-                  aria-label={`移除 ${p.name}`}
-                  className="w-4 shrink-0 text-muted opacity-40 hover:rotate-90 hover:opacity-100"
-                >
-                  ×
+        <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:[&>*:first-child]:mt-0">
+          {/* 分攤方式 */}
+          <Panel title="SPLIT" sub="分攤方式">
+            <div className="flex flex-wrap gap-2">
+              {SPLIT_MODES.map((m) => (
+                <button key={m.id} className={chipClass(state.splitMode === m.id)} onClick={() => update({ splitMode: m.id })}>
+                  {m.label}
                 </button>
-                <input
-                  value={p.name}
-                  onChange={(e) => updatePerson(p.id, { name: e.target.value })}
-                  className="min-w-0 flex-1 bg-transparent uppercase text-foreground outline-none"
-                  aria-label="名字"
-                />
-                {state.splitMode === "weight" && (
-                  <div className="flex shrink-0 items-center font-normal text-foreground">
-                    <button
-                      aria-label="減少份數"
-                      onClick={() => updatePerson(p.id, { weight: Math.max(0, p.weight - 0.5) })}
-                      className="px-1.5 text-muted hover:text-foreground"
-                    >
-                      −
-                    </button>
-                    <span className="w-[4ch] text-center">×{p.weight}</span>
-                    <button
-                      aria-label="增加份數"
-                      onClick={() => updatePerson(p.id, { weight: p.weight + 0.5 })}
-                      className="px-1.5 text-muted hover:text-foreground"
-                    >
-                      +
-                    </button>
-                  </div>
-                )}
-                {state.splitMode === "fixed" && (
-                  <label className="flex shrink-0 items-center rounded-full border border-soft px-2 font-normal text-foreground">
+              ))}
+            </div>
+            <p className="mt-2 text-[11px] leading-snug text-muted">
+              {SPLIT_MODES.find((m) => m.id === state.splitMode)?.hint}
+            </p>
+            {state.splitMode === "items" && (
+              <ItemsEditor
+                state={state}
+                onUpdate={updateItem}
+                onAdd={() =>
+                  update({ items: [...state.items, { id: newId(), name: "", price: 0, sharedBy: [] }] })
+                }
+                onRemove={(id) => update({ items: state.items.filter((it) => it.id !== id) })}
+              />
+            )}
+            <Notice warning={calc.splitWarning} note={calc.splitNote} />
+          </Panel>
+
+          {/* 服務費 */}
+          <ServicePanel state={state} amount={calc.service} onChange={update} />
+
+          {/* 誰代墊 */}
+          <Panel
+            title="PAID BY"
+            sub="誰先代墊"
+            right={
+              <div className="flex overflow-hidden rounded-full border-[1.5px] border-line font-mono text-[11px]">
+                {(["single", "multi"] as const).map((m) => (
+                  <button
+                    key={m}
+                    onClick={() => update({ payerMode: m })}
+                    className={`px-2.5 py-1 ${state.payerMode === m ? "bg-line text-background" : ""}`}
+                  >
+                    {m === "single" ? "一人" : "多人"}
+                  </button>
+                ))}
+              </div>
+            }
+          >
+            {state.people.length === 0 && <p className="text-[11px] text-muted">先新增朋友</p>}
+            {state.payerMode === "single" ? (
+              <div className="flex flex-wrap gap-2">
+                {state.people.map((p) => (
+                  <button key={p.id} className={chipClass(calc.payerId === p.id)} onClick={() => update({ payerId: p.id })}>
+                    {p.name || "?"}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+                {state.people.map((p) => (
+                  <label key={p.id} className="flex items-center gap-1 border-b border-soft py-1 font-mono text-[13px]">
+                    <span className="min-w-0 flex-1 truncate">{p.name || "?"}</span>
                     <span className="text-muted">$</span>
                     <input
                       type="number"
                       inputMode="decimal"
                       min={0}
-                      value={p.fixed ?? ""}
-                      placeholder="均分"
-                      onChange={(e) =>
-                        updatePerson(p.id, { fixed: e.target.value === "" ? null : toNumber(e.target.value) })
-                      }
-                      className="w-[6ch] bg-transparent text-right outline-none placeholder:text-muted"
-                      aria-label={`${p.name} 指定金額`}
+                      value={p.advanced ? p.advanced : ""}
+                      placeholder="0"
+                      onChange={(e) => updatePerson(p.id, { advanced: toNumber(e.target.value) })}
+                      className="w-[7ch] bg-transparent text-right outline-none placeholder:text-soft"
+                      aria-label={`${p.name} 代墊金額`}
                     />
                   </label>
-                )}
-                <span className="w-[7ch] shrink-0 text-right">${money(calc.shares[i], decimals)}</span>
-                {owes ? (
-                  <Toggle on={p.paid} onChange={(v) => updatePerson(p.id, { paid: v })} label={`${p.name} 已還`} />
-                ) : (
-                  <span className="flex h-6 w-11 shrink-0 items-center justify-center rounded-full border border-soft text-[10px] font-normal">
-                    {receives ? "代墊" : "—"}
-                  </span>
-                )}
-              </li>
-            );
-          })}
-          {state.people.length === 0 && (
-            <li className="py-6 text-center font-mono text-[12px] text-muted">還沒有人，按 +ADD 新增</li>
+                ))}
+              </div>
+            )}
+            {state.payerMode === "multi" && state.people.length > 0 && (
+              <p className="mt-2 font-mono text-[11px] text-muted">
+                代墊合計 ${money(calc.advancedSum, 0)}／總計 ${money(calc.total, 0)}
+              </p>
+            )}
+            <Notice warning={calc.payerWarning} />
+          </Panel>
+
+          {/* 人員列表 */}
+          <section className="mt-5">
+            <div className="flex items-center justify-between pb-2 font-mono text-[11px] tracking-wider">
+              <button onClick={addPerson} className="font-medium transition-[translate] hover:translate-x-1 hover:underline">
+                +ADD 新增朋友
+              </button>
+              <span className="text-muted">
+                {state.splitMode === "weight" ? "份數 ・ " : state.splitMode === "fixed" ? "指定 ・ " : ""}應付 ・ 已還
+              </span>
+            </div>
+            <ul className="border-t-[1.5px] border-line">
+              {state.people.map((p, i) => {
+                const owes = calc.debts[i] > 0;
+                const receives = calc.nets[i] > 0.004;
+                return (
+                  <li
+                    key={p.id}
+                    className={`flex items-center gap-2 border-b border-soft py-2.5 font-mono text-[13px] ${
+                      owes && !p.paid ? "font-semibold" : "text-muted"
+                    }`}
+                  >
+                    <button
+                      onClick={() => removePerson(p.id)}
+                      aria-label={`移除 ${p.name}`}
+                      className="w-4 shrink-0 text-muted opacity-40 hover:rotate-90 hover:opacity-100"
+                    >
+                      ×
+                    </button>
+                    <input
+                      value={p.name}
+                      onChange={(e) => updatePerson(p.id, { name: e.target.value })}
+                      className="min-w-0 flex-1 bg-transparent uppercase text-foreground outline-none"
+                      aria-label="名字"
+                    />
+                    {state.splitMode === "weight" && (
+                      <div className="flex shrink-0 items-center font-normal text-foreground">
+                        <button
+                          aria-label="減少份數"
+                          onClick={() => updatePerson(p.id, { weight: Math.max(0, p.weight - 0.5) })}
+                          className="px-1.5 text-muted hover:text-foreground"
+                        >
+                          −
+                        </button>
+                        <span className="w-[4ch] text-center">×{p.weight}</span>
+                        <button
+                          aria-label="增加份數"
+                          onClick={() => updatePerson(p.id, { weight: p.weight + 0.5 })}
+                          className="px-1.5 text-muted hover:text-foreground"
+                        >
+                          +
+                        </button>
+                      </div>
+                    )}
+                    {state.splitMode === "fixed" && (
+                      <label className="flex shrink-0 items-center rounded-full border border-soft px-2 font-normal text-foreground">
+                        <span className="text-muted">$</span>
+                        <input
+                          type="number"
+                          inputMode="decimal"
+                          min={0}
+                          value={p.fixed ?? ""}
+                          placeholder="均分"
+                          onChange={(e) =>
+                            updatePerson(p.id, { fixed: e.target.value === "" ? null : toNumber(e.target.value) })
+                          }
+                          className="w-[6ch] bg-transparent text-right outline-none placeholder:text-muted"
+                          aria-label={`${p.name} 指定金額`}
+                        />
+                      </label>
+                    )}
+                    <span className="w-[7ch] shrink-0 text-right">${money(calc.shares[i], decimals)}</span>
+                    {owes ? (
+                      <Toggle on={p.paid} onChange={(v) => updatePerson(p.id, { paid: v })} label={`${p.name} 已還`} />
+                    ) : (
+                      <span className="flex h-6 w-11 shrink-0 items-center justify-center rounded-full border border-soft text-[10px] font-normal">
+                        {receives ? "代墊" : "—"}
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+              {state.people.length === 0 && (
+                <li className="py-6 text-center font-mono text-[12px] text-muted">還沒有人，按 +ADD 新增</li>
+              )}
+            </ul>
+          </section>
+
+        </div>
+
+        <div className="lg:col-start-1 lg:row-start-2 lg:self-start">
+          {/* 結算：誰要轉帳給誰 */}
+          <PayInfoPanel
+            receivers={state.people.filter((_, i) => calc.nets[i] > 0.004)}
+            onChange={(id, payInfo) => updatePerson(id, { payInfo })}
+          />
+
+          {state.people.length > 0 && (
+            <SettleList
+              transfers={calc.transfers}
+              nameOf={nameOf}
+              payInfoOf={payInfoOf}
+              decimals={decimals}
+              isPaid={(id) => !!state.people.find((p) => p.id === id)?.paid}
+              onToggle={(id) => setState((s) => ({ ...s, people: s.people.map((p) => (p.id === id ? { ...p, paid: !p.paid } : p)) }))}
+            />
           )}
-        </ul>
-      </section>
 
-      {/* 結算：誰要轉帳給誰 */}
-      <PayInfoPanel
-        receivers={state.people.filter((_, i) => calc.nets[i] > 0.004)}
-        onChange={(id, payInfo) => updatePerson(id, { payInfo })}
-      />
-
-      {state.people.length > 0 && (
-        <SettleList
-          transfers={calc.transfers}
-          nameOf={nameOf}
-          payInfoOf={payInfoOf}
-          decimals={decimals}
-          isPaid={(id) => !!state.people.find((p) => p.id === id)?.paid}
-          onToggle={(id) => setState((s) => ({ ...s, people: s.people.map((p) => (p.id === id ? { ...p, paid: !p.paid } : p)) }))}
-        />
-      )}
+        </div>
+      </div>
 
       <p className="mt-6 text-center font-mono text-[10px] tracking-widest text-muted">
         資料只存在這台裝置的瀏覽器
